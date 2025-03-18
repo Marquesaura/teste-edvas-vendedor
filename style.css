@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+*{
+    font-family: 'Nunito', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    
+}
+body{
+    text-align: center;
+    padding: 0;
+    background-color: rgb(219, 184, 104);
+}
+h1{
+    font-size: 40px; 
+    margin: 25px;
+}
+h2{
+    font-size: 30px;
+    margin: 20px;
+}
+input{
+    margin: 10px;
+    border-radius: 5px;
+    padding: 7px;
+    background-color: rgb(250, 244, 225);
+}
+#vendedores, #clientes, #vendas{
+    display: inline-block;
+    margin: 1.5%;
+    padding: 20px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    border: 2px solid rgb(219, 184, 104);
+    width: 300px;
+    align-items: center;
+    text-align: center;
+    background-color: rgba(244, 230, 195, 0.74);
+}
+button{
+    margin: 10px;
+    padding: 7px;
+    border-radius: 10px;
+    background-color: rgb(219, 184, 104);
+    border-color: rgb(219, 184, 104);
+}
+select{
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: rgb(250, 244, 225);
+}

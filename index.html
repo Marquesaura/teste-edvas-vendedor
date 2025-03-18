@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refúgio das palavras</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+        <h1>Sistema Livraria <br>Refúgio das palavras</h1>
+
+        <!-- Cadastro de Vendedores -->
+        <div id="vendedores">
+            <h2>Cadastro de Vendedores</h2>
+            <input type="text" id="Vendedores_nome" placeholder="Nome do Vendedor" required><br>
+            <input type="date" id="Vendedores_nascimento" placeholder="Nascimento" required><br>
+            <button onclick="adicionarVendedores()">Cadastrar Vendedor</button>
+            <ul id="lista_Vendedores"></ul>
+        </div>
+
+        <!-- Cadastro de Clientes -->
+        <div id="clientes">
+            <h2>Cadastro de Clientes</h2>
+            <input type="text" id="Clientes_nome" placeholder="Nome do Cliente" required><br>
+            <input type="date" id="Clientes_nascimento" placeholder="Nascimento" required><br>
+            <button onclick="adicionarClientes()">Cadastrar Cliente</button>
+            <ul id="lista_Clientes"></ul>
+        </div>
+
+        <!-- Cadastro de Vendas -->
+        <div id="vendas">
+            <h2>Cadastro de Vendas</h2>
+            <select id="Vendas_vendedor" required>
+                <!-- Vendedores dinamicamente carregados -->
+            </select><br>
+            <input type="date" id="Vendas_data" placeholder="Data" required><br>
+            <input type="time" id="Vendas_horario" placeholder="Horário" required><br>
+            <button onclick="adicionarVendas()">Cadastrar Venda</button>
+            <ul id="lista_Vendas"></ul>
+        </div>
+
+        <!-- Tabela Resumo -->
+        <div id="tabela_vendas">
+            <h2>Resumo de Vendas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vendedor</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo_tabela_vendas"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        let db = {
+            Vendedores: [],
+            Clientes: [],
+            Vendas: []
+        };
+
+        function salvarDados() {
+            localStorage.setItem('db', JSON.stringify(db));
+        }
+
+        function carregarDados() {
+            const dados = localStorage.getItem('db');
+            if (dados) {
+                db = JSON.parse(dados);
+            }
+        }
+
+        function adicionarVendedores() {
+            const nome = document.getElementById("Vendedores_nome").value;
+            const nascimento = document.getElementById("Vendedores_nascimento").value;
+
+            if (!nome || !nascimento) {
+                alert("Preencha todos os campos do vendedor!");
+                return;
+            }
+
+            const id = db.Vendedores.length + 1;
+            db.Vendedores.push({ id, nome, nascimento });
+            salvarDados();
+            listarVendedores();
+        }
+
+        function adicionarClientes() {
+            const nome = document.getElementById("Clientes_nome").value;
+            const nascimento = document.getElementById("Clientes_nascimento").value;
+
+            if (!nome || !nascimento) {
+                alert("Preencha todos os campos do cliente!");
+                return;
+            }
+
+            const id = db.Clientes.length + 1;
+            db.Clientes.push({ id, nome, nascimento });
+            salvarDados();
+            listarClientes();
+        }
+
+        function adicionarVendas() {
+            const data = document.getElementById("Vendas_data").value;
+            const horario = document.getElementById("Vendas_horario").value;
+            const id_Vendedor = document.getElementById("Vendas_vendedor").value;
+
+            if (!data || !horario || !id_Vendedor) {
+                alert("Preencha todos os campos da venda!");
+                return;
+            }
+
+            const id = db.Vendas.length + 1;
+            db.Vendas.push({ id, data, horario, id_Vendedor });
+            salvarDados();
+            listarTabelaVendas();
+        }
+
+        function listarVendedores() {
+            let lista = "";
+            db.Vendedores.forEach(v => {
+                lista += `<li>${v.nome} - ${v.nascimento} <button onclick="excluirVendedores(${v.id})">Excluir</button></li>`;
+            });
+            document.getElementById("lista_Vendedores").innerHTML = lista;
+
+            const dropdown = document.getElementById("Vendas_vendedor");
+            dropdown.innerHTML = "";
+            db.Vendedores.forEach(v => {
+                const option = document.createElement("option");
+                option.value = v.id;
+                option.textContent = v.nome;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function listarClientes() {
+            let lista = "";
+            db.Clientes.forEach(c => {
+                lista += `<li>${c.nome} - ${c.nascimento} <button onclick="excluirClientes(${c.id})">Excluir</button></li>`;
+            });
+            document.getElementById("lista_Clientes").innerHTML = lista;
+        }
+
+        function listarTabelaVendas() {
+            const corpoTabela = document.getElementById("corpo_tabela_vendas");
+            corpoTabela.innerHTML = "";
+            db.Vendas.forEach(v => {
+                const vendedor = db.Vendedores.find(ven => ven.id == v.id_Vendedor)?.nome || "Desconhecido";
+
+                corpoTabela.innerHTML += `
+                    <tr>
+                        <td>${vendedor}</td>
+                        <td>N/A</td>
+                        <td>${v.data}</td>
+                        <td>${v.horario}</td>
+                        <td><button onclick="excluirVendas(${v.id})">Excluir</button></td>
+                    </tr>`;
+            });
+        }
+
+        function excluirVendedores(id) {
+            db.Vendedores = db.Vendedores.filter(v => v.id !== id);
+            salvarDados();
+            listarVendedores();
+        }
+
+        function excluirClientes(id) {
+            db.Clientes = db.Clientes.filter(c => c.id !== id);
+            salvarDados();
+            listarClientes();
+        }
+
+        function excluirVendas(id) {
+            db.Vendas = db.Vendas.filter(v => v.id !== id);
+            salvarDados();
+            listarTabelaVendas();
+        }
+
+        window.onload = function () {
+            carregarDados();
+            listarVendedores();
+            listarClientes();
+            listarTabelaVendas();
+        };
+    </script>
+</body>
+
+</html>
